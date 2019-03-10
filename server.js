@@ -1,15 +1,11 @@
-// import express from 'express';
 import cors from 'cors';
-// import bodyParser from 'body-parser';
-var Request = require("request");
 
-// const app = express();
-// const router = express.Router();
+const querystring = require('querystring');
+var Request = require("request");
 
 var express = require("express");
 var app = express();
 app.use(cors());
-// app.use(bodyParser.json());
 
 app.listen(4000, () => {
  console.log("Server running on port 4000");
@@ -23,5 +19,22 @@ app.get("/stations", (req, res, next) => {
 	    }
 	    console.dir(JSON.parse(body));
  		res.json(JSON.parse(body).root.stations);
+	});
+});
+
+app.get("/trips", (req, res, next) => {
+
+	Request.get("http://api.bart.gov/api/sched.aspx?cmd=depart&orig=" + req.query.source + "&dest=" + req.query.destination + "&date=now&key=QEMQ-5X6J-9JTT-DWE9&json=y", (error, response, body) => {
+	    if(error) {
+	        return console.dir(error);
+	    }
+	    console.dir(JSON.parse(body));
+
+	    let root = JSON.parse(body).root;
+	    let schedule = root.schedule;
+	    schedule.origin = root.origin;
+	    schedule.destination = root.destination;
+
+ 		res.json(schedule);
 	});
 });
