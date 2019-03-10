@@ -38,3 +38,14 @@ app.get("/trips", (req, res, next) => {
  		res.json(schedule);
 	});
 });
+
+app.get("/station", (req, res, next) => {
+
+	Request.get("http://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=" + req.query.source + "&key=MW9S-E7SL-26DU-VV8V&json=y", (error, response, body) => {
+	    if(error) {
+	        return console.dir(error);
+	    }
+	    console.dir(JSON.parse(body));
+ 		res.json(JSON.parse(body).root.stations.station);
+	});
+});
